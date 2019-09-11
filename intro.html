@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>intro</title>
+    <style type="text/css">
+    button {
+        background: #8bc34a;
+        padding: 8px 16px;
+    }
+    </style>
+</head>
+
+<body>
+    <h1>获取版本</h1>
+    <div>
+        <span id='display'></span>
+        <button onclick="versionBtnHdl()">获取版本</button>
+    </div>
+    <h1>电源和伺服</h1>
+    <button onclick="powerBtnHdl()">打开电源</button>
+    <button onclick="servoBtnHdl()">打开使能</button>
+    <h1>关节移动</h1>
+    <button onmousedown="jogDown(1)" onmouseup='jodUp()'>JOG+</button>
+    <button onmousedown="jogDown(-1)" onmouseup='jodUp()'>JOG-</button>
+    <select onchange="changeHdl(event)">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+    </select>
+    <h1>socket</h1>
+    <div id='joint_cmd'>display</div>
+    <h1>视觉工艺</h1>
+    <input type="file" onchange="ocr(event)">
+    <div id="ocr_res"></div>
+</body>
+<script src="./socket.io.js"></script>
+<script src="./axios.js"></script>
+<script type="text/javascript">
+var apis = 'http://192.168.0.123:1029'
+
+
+axios.defaults.headers.common['Content-Type'] = 'application/x-www-form-urlencoded'
+
+axios.defaults.transformRequest = [function(data) {
+    let ret = ''
+    for (let it in data) {
+        ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+    }
+    return ret
+}]
+
+function versionBtnHdl() {
+    axios({
+            method: "GET",
+            url: apis + "/system/version",
+        })
+        .then(function(res) {
+            display.innerHTML = res.data.data.robot
+        })
+}
+
+function powerBtnHdl() {
+    axios({
+            method: "POST",
+            url: apis + "/robot/power",
+            data: { status: 1 },
+        })
+        .then(function(res) {
+            alert(res.data.msg)
+        })
+}
+
+function servoBtnHdl() {
+    axios({
+            method: "POST",
+            url: apis + "/robot/servo",
+            data: { status: 1 },
+        })
+        .then(function(res) {
+            console.log(res.data)
+        })
+}
+var joint = 1;
+
+function jogDown() {
+    axios({
+            method: "POST",
+            url: apis + "/robot/jog_start",
+            data: {
+                axis: joint,
+                dir: 1
+            },
+        })
+        .then(function(res) {
+            console.log(res.data.msg)
+        })
+}
+
+function jodUp() {
+    axios({
+            method: "POST",
+            url: apis + "/robot/jog_stop",
+        })
+        .then(function(res) {
+            console.log(res.data.msg)
+        })
+}
+
+function changeHdl(e) {
+    console.log(e.target.value)
+}
+
+var socket = io(apis)
+
+socket.on('connect', function() {
+    console.log('connected')
+})
+socket.on('system_status', function(res) {
+    for (var i = res.data.joint_cmd.length - 1; i >= 0; i--) {
+        res.data.joint_cmd[i] = res.data.joint_cmd[i].toFixed(2)
+    }
+    joint_cmd.innerHTML = res.data.joint_cmd.join('</br>')
+})
+
+function ocr(e) {
+    var reader = new FileReader()
+    var file = e.target.files[0]
+    var base64Img = reader.readAsDataURL(file)
+    reader.onload = function(e) {
+        axios({
+                method: "POST",
+                url: 'http://47.112.142.212:5003/image_spot',
+                data: {
+                    "base64_data": reader.result
+                }
+            })
+            .then(function(res) {
+                ocr_res.innerHTML = res.data.data
+            })
+    }
+}
+</script>
+
+</html>
