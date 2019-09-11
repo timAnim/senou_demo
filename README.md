@@ -202,6 +202,6 @@ button {
 </style>
 ```
 
-SENOU为您提供了更多的api接口，您可以使用这些接口，快速简单的定制符合您的机器人控制器。更多接口请访问[SENOU官网](http://senou.robotmeta.com)，或下载此部分示例代码。
+SENOU为您提供了更多的api接口，您可以使用这些接口，快速简单的定制符合您的机器人控制器。更多接口请访问[SENOU官网](http://senou.robotmeta.com)，或 [在github上下载示例代码](https://github.com/timAnim/senou_demo.git)。
 
 
