@@ -46,7 +46,7 @@
 
 </html>
 ```
-这两个文件可以从启玄科技的官网下载 [axios.js](http://senou.robotmeta.com/static/axios.js)， [socket.io.js](http://senou.robotmeta.com/static/socket.io.js)。
+这两个文件可以从启玄科技的官网下载 [axios.js](https://www.robotmeta.com/axios.js)， [socket.io.js](https://www.robotmeta.com/socket.io.js)。
 
 # 配置axios
 在socket.io.js后面新建script标签。并配置axios的请求地址（地址以实际机器人内网地址为准），请求头，请求参数的处理回调（直接粘贴就可以，具体作用以后介绍）。
